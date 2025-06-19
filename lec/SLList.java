@@ -38,16 +38,16 @@ public class SLList {
         * }
         * p.next = new IntNode(x, null);
         * */
-        firstCopy = first
+        IntNode firstCopy = first;
         if (first.next == null){
-            first.next = IntNode(x, null)
+            first.next = IntNode(x, null);
         }
         else{
             /*first.next.addLast(x); This make the compiler unable to
             * locate the symbol. Perhaps `addLast` is a method on the level of
             * SLList, while IntNode type serves only as data form.
             * */
-            first = first.next
+            first = first.next;
         }
     }
 

@@ -82,7 +82,13 @@ public class IntList {
 
     public static IntList dcatenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        IntList pointer = A;
+        while (pointer.rest != null){
+            pointer = pointer.rest;
+        }
+        /** Here, the pointer is directed into the last IntList of A*/
+        pointer.rest = B;
+        return A;
     }
 
     /**
@@ -91,7 +97,47 @@ public class IntList {
      */
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        IntList ap = A;
+        //IntList bp = B;
+        IntList NewIntList = new IntList(A.first, null);
+        IntList np = NewIntList;
+
+        while (ap.rest != null){
+            ap = ap.rest;
+            np.rest = new IntList(ap.first, null);
+            np = np.rest;
+        }
+
+        np.rest = B;
+
+
+        /*IntList pointer = A;
+        IntList NewIntList = new IntList(A.first, null);
+        IntList np = NewIntList;
+        while (pointer.rest != null){
+            // break it down
+            // with original reference still held, there's no worry
+            pointer = pointer.rest;
+            np.rest = new IntList(pointer.first, null);
+            np = np.rest;
+        }
+        // Finishes when only 1 IntList remaining, so there should be
+        // one more manual operation
+        np.rest = new IntList(pointer.first, null);
+        // np = np.rest; ok above!
+        IntList bpointer = B;
+        np = new IntList(bpointer.first, null);
+        while (bpointer.rest != null){
+            // break it down
+            // with original reference still held, there's no worry
+            bpointer = bpointer.rest;
+            np.rest = new IntList(bpointer.first, null);
+            np = np.rest;
+        }
+        // Finishes when only 1 IntList remaining, so there should be
+        // one more manual operation
+        // np.rest = new IntList(pointer.first, null);*/
+        return NewIntList;
     }
 
 
