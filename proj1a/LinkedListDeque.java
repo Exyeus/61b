@@ -34,7 +34,7 @@ public class LinkedListDeque<T> {
         this.size = 0;
     }
 
-    public class IntNode {
+    private class IntNode {
         public IntNode(T item, IntNode prev, IntNode next) {
             this.prev = prev;
             this.item = item;
