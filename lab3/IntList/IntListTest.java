@@ -11,10 +11,29 @@ public class IntListTest {
      */
 
     @Test
+
+    public void testReverse(){
+        IntList one = new IntList(1, null);
+        IntList twoOne = new IntList(2, one);
+        IntList threeTwoOne = new IntList(3, twoOne);
+        IntList oneTwoThree = new IntList(1,
+                new IntList(2,
+                        new IntList(3, null)));
+        IntList x = IntList.reverse(threeTwoOne);
+        IntList n = null;
+        IntList reversedN = IntList.reverse(n);
+
+        assertEquals(oneTwoThree, x);
+        assertEquals(null, reversedN);
+
+    }
+
+    @Test
     public void testList() {
         IntList one = new IntList(1, null);
         IntList twoOne = new IntList(2, one);
         IntList threeTwoOne = new IntList(3, twoOne);
+
 
         IntList x = IntList.of(3, 2, 1);
         assertEquals(threeTwoOne, x);
