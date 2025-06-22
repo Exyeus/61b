@@ -1,4 +1,4 @@
-public class ArrayDeque<Type> {
+public class ArrayDeque<T> {
     /**
      * add and remove must take constant time,
      * except during resizing operations.
@@ -14,15 +14,15 @@ public class ArrayDeque<Type> {
      *  underlying array).
      * This will result in far fewer headaches than non-circular approaches.
      */
-    private Type[] data;
+    private T[] data;
     private int size;
     private int itemSum;
     private int rightExtendIndex;
     private int leftExtendIndex;
 
-    public ArrayDeque(){
+    public ArrayDeque() {
         size = 8;
-        data = (Type[]) new Object[size];
+        data = (T[]) new Object[size];
         itemSum = 0;
 
         /* Index can be mod8 to circulate!
@@ -47,16 +47,17 @@ public class ArrayDeque<Type> {
      * Enlarge the array by 2 in size will be definitely sufficient!
      * I can just concatenate the *circled* part !
      */
-    private void sizeModifier(){
+    private void sizeModifier() {
         // remember to update all the attributes!
         // The following code are for enlarging this array!
 
 
         // The following code are for shrinking this array!
-        if (itemSum * 4 <= size && size >= 16){
-            Type[] tempNew = (Type[]) new Object[size / 2];
+        if (itemSum * 4 <= size
+                && size >= 16) {
+            T[] tempNew = (T[]) new Object[size / 2];
             System.arraycopy(data, leftExtendIndex, tempNew,
-                    leftExtendIndex-size/4, itemSum);
+                    leftExtendIndex - size / 4, itemSum);
 
             // update all the parameters!
             this.data = tempNew;
@@ -70,38 +71,38 @@ public class ArrayDeque<Type> {
 
         else {
             // the array cannot be filled with anything else!
-            Type[] tempNew = (Type[]) new Object[2 * size];
-            if (rightExtendIndex < leftExtendIndex){
+            T[] tempNew = (T[]) new Object[2 * size];
+            if (rightExtendIndex < leftExtendIndex) {
                 // One side exceeds!
-                if (rightExtendIndex < (size / 2)){
+                if (rightExtendIndex < (size / 2)) {
                     // Right exceeds!
                     // Copying left ones
                     System.arraycopy(data, leftExtendIndex,
                             tempNew, size/2 + leftExtendIndex,
-                            size/2 - leftExtendIndex);
+                            size / 2 - leftExtendIndex);
                     // Copy right ones
                     System.arraycopy(data, size / 2, tempNew, size, size/2);
                     // exceeding right ones
                     System.arraycopy(data, 0, tempNew, (size / 2) * 3,
                             rightExtendIndex+1);
 
-                    this.leftExtendIndex = size/2 + this.leftExtendIndex;
-                    this.rightExtendIndex = (size/2) * 3 + this.rightExtendIndex;
+                    this.leftExtendIndex = size / 2 + this.leftExtendIndex;
+                    this.rightExtendIndex = (size / 2) * 3 + this.rightExtendIndex;
 
                 } else if (leftExtendIndex > (size / 2)) {
                     // Left exceeds
                     System.arraycopy(data, size / 2, tempNew, size,
-                            rightExtendIndex - size/2 + 1);
+                            rightExtendIndex - size / 2 + 1);
                     System.arraycopy(data, 0, tempNew, size / 2,
                             size / 2);
                     System.arraycopy(data, leftExtendIndex, tempNew,
-                            (size/2)-(size-rightExtendIndex), size-rightExtendIndex);
+                            (size / 2) - (size - rightExtendIndex), size - rightExtendIndex);
 
                     this.rightExtendIndex = this.rightExtendIndex + this.size / 2;
                     this.leftExtendIndex = this.size / 2 + (this.size - leftExtendIndex);
 
                 }
-            }else if (rightExtendIndex > leftExtendIndex){
+            }else if (rightExtendIndex > leftExtendIndex) {
                 System.arraycopy(data, leftExtendIndex, tempNew,
                         leftExtendIndex + (size / 2), itemSum);
 
@@ -114,51 +115,63 @@ public class ArrayDeque<Type> {
         }
 
     }
-    public void addFirst(Type item){
-        sizeModifier();
+    public void addFirst(T item) {
+        if (itemSum == size){
+            sizeModifier();
+        }
         data[leftExtendIndex] = item;
-        leftExtendIndex = (leftExtendIndex - 1) % size;
+        leftExtendIndex = (leftExtendIndex - 1 + size) % size;
         itemSum += 1;
     }
 
-    public void addLast(Type item){
-        sizeModifier();
+    public void addLast(T item) {
+        if (itemSum == size){
+            sizeModifier();
+        }
         data[rightExtendIndex] = item;
-        rightExtendIndex = (rightExtendIndex - 1) % size;
+        rightExtendIndex = (rightExtendIndex + 1) % size;
         itemSum += 1;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return itemSum == 0;
     }
 
-    public int size(){
+    public int size() {
         return this.itemSum;
     }
 
     public void printDeque() {
-        for (int start = leftExtendIndex; start <= this.size + rightExtendIndex; start++){
+        for (int start = leftExtendIndex; start <= this.size + rightExtendIndex; start++) {
             System.out.print(data[(start) % this.size] + " ");
         }
     }
 
 
-    public Type removeFirst(){
-        Type result = data[leftExtendIndex];
+    public T removeFirst() {
+        if (itemSum == 0){
+            System.out.print("No more elements for removal");
+            return null;
+        }
+        T result = data[leftExtendIndex];
         leftExtendIndex = (leftExtendIndex + 1) % size;
         itemSum -= 1;
         return result;
     }
 
-    public Type removeLast(){
-        Type result = data[rightExtendIndex];
-        rightExtendIndex = (rightExtendIndex - 1) % size;
+    public T removeLast() {
+        if (itemSum == 0){
+            System.out.print("No more elements for removal");
+            return null;
+        }
+        T result = data[rightExtendIndex];
+        rightExtendIndex = (rightExtendIndex - 1 + size) % size;
         itemSum -= 1;
         return result;
     }
 
-    public Type get(int index){
-        if ((leftExtendIndex + index) % size < rightExtendIndex){
+    public T get(int index) {
+        if ((leftExtendIndex + index) % size < rightExtendIndex) {
             return data[leftExtendIndex + index];
         }else{
             System.out.print("Index out of range");

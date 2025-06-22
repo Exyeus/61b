@@ -1,4 +1,4 @@
-public class LinkedListDeque<Type> {
+public class LinkedListDeque<T> {
     /**
      *add and remove operations must not involve
      * any looping or recursion. A single such operation
@@ -35,22 +35,22 @@ public class LinkedListDeque<Type> {
     }
 
     public class IntNode{
-        public IntNode(Type item, IntNode prev, IntNode next){
+        public IntNode(T item, IntNode prev, IntNode next){
             this.prev = prev;
             this.item = item;
             this.next = next;
         }
         public IntNode prev;
-        public Type item;
+        public T item;
         public IntNode next;
     }
-    public void addFirst(Type item){
+    public void addFirst(T item){
         IntNode originalNext = frontSentinel.next;
         frontSentinel.next = new IntNode(item, frontSentinel, originalNext);
         originalNext.prev = frontSentinel.next;
         size += 1;
     }
-    public void addLast(Type item){
+    public void addLast(T item){
         IntNode originalPrev = backSentinel.prev;
         backSentinel.prev = new IntNode(item, originalPrev, backSentinel);
         originalPrev.next = backSentinel.prev;
@@ -71,8 +71,8 @@ public class LinkedListDeque<Type> {
         }
         System.out.print(headPointer.item);
     }
-    public Type removeFirst(){
-        Type result = frontSentinel.next.item;
+    public T removeFirst(){
+        T result = frontSentinel.next.item;
         // remember to completely throw away all references in discarding!
 
         IntNode newNext = frontSentinel.next.next;
@@ -80,14 +80,14 @@ public class LinkedListDeque<Type> {
         newNext.prev = frontSentinel;
         return result;
     }
-    public Type removeLast(){
-        Type result = backSentinel.prev.item;
+    public T removeLast(){
+        T result = backSentinel.prev.item;
         IntNode newPrev = backSentinel.prev.prev;
         backSentinel.prev = newPrev;
         newPrev.next = backSentinel;
         return result;
     }
-    public Type get(int index){
+    public T get(int index){
         if (index >= size){
             return null;
         }
@@ -98,10 +98,10 @@ public class LinkedListDeque<Type> {
         }
         return startPointer.item;
     }
-    public Type getRecursive(int index){
+    public T getRecursive(int index){
         return recurHelper(frontSentinel.next, index);
     }
-    private Type recurHelper(IntNode accessObject, int index){
+    private T recurHelper(IntNode accessObject, int index){
         if (index < 0 | index >= size){
             System.out.print("invalid index!");
             return null;
