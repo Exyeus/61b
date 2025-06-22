@@ -21,96 +21,114 @@ public class LinkedListDeque<T> {
     private final IntNode backSentinel;
     private int size;
 
-    public LinkedListDeque(){
+    public LinkedListDeque() {
         /*
          * Instantiate a new empty LLD.
          */
         this.frontSentinel = new IntNode(null,
                 null, null);
         this.backSentinel = new IntNode(null,
-                frontSentinel,null);
+                frontSentinel, null);
         frontSentinel.next = backSentinel;
         backSentinel.prev = frontSentinel;
         this.size = 0;
     }
 
-    public class IntNode{
-        public IntNode(T item, IntNode prev, IntNode next){
+    public class IntNode {
+        public IntNode(T item, IntNode prev, IntNode next) {
             this.prev = prev;
             this.item = item;
             this.next = next;
         }
-        public IntNode prev;
-        public T item;
-        public IntNode next;
+        private IntNode prev;
+        private T item;
+        private IntNode next;
     }
-    public void addFirst(T item){
+    public void addFirst(T item) {
         IntNode originalNext = frontSentinel.next;
         frontSentinel.next = new IntNode(item, frontSentinel, originalNext);
         originalNext.prev = frontSentinel.next;
         size += 1;
     }
-    public void addLast(T item){
+    public void addLast(T item) {
         IntNode originalPrev = backSentinel.prev;
         backSentinel.prev = new IntNode(item, originalPrev, backSentinel);
         originalPrev.next = backSentinel.prev;
         size += 1;
     }
-    public boolean isEmpty(){
-        return frontSentinel.next == backSentinel &&
-                backSentinel.prev == frontSentinel;
+    public boolean isEmpty() {
+        return frontSentinel.next == backSentinel
+                && backSentinel.prev == frontSentinel;
     }
-    public int size(){
+    public int size() {
         return size;
     }
-    public void printDeque(){
+    public void printDeque() {
         IntNode headPointer = frontSentinel.next;
-        while (headPointer.next != backSentinel){
+        while (headPointer.next != backSentinel) {
             System.out.print(headPointer.item + " ");
             headPointer = headPointer.next;
         }
         System.out.print(headPointer.item);
     }
-    public T removeFirst(){
+    public T removeFirst() {
+        if (this.isEmpty()){
+            return null;
+        }
         T result = frontSentinel.next.item;
         // remember to completely throw away all references in discarding!
 
         IntNode newNext = frontSentinel.next.next;
         frontSentinel.next = newNext;
         newNext.prev = frontSentinel;
+        this.size -= 1;
         return result;
     }
-    public T removeLast(){
+    public T removeLast() {
+        if (this.isEmpty()){
+            return null;
+        }
         T result = backSentinel.prev.item;
         IntNode newPrev = backSentinel.prev.prev;
         backSentinel.prev = newPrev;
         newPrev.next = backSentinel;
+        this.size -= 1;
         return result;
     }
-    public T get(int index){
-        if (index >= size){
+    public T get(int index) {
+        if (index >= size) {
             return null;
         }
         IntNode startPointer = frontSentinel.next;
-        while (index >= 0){
+        // The first node after frontSentinel!
+        while (index > 0) {
             index -= 1;
             startPointer = startPointer.next;
         }
         return startPointer.item;
     }
-    public T getRecursive(int index){
+    public T getRecursive(int index) {
         return recurHelper(frontSentinel.next, index);
     }
-    private T recurHelper(IntNode accessObject, int index){
-        if (index < 0 | index >= size){
+    private T recurHelper(IntNode accessObject, int index) {
+        if (index < 0 | index >= size) {
             System.out.print("invalid index!");
             return null;
         }
-        if (index == 0){
+        if (index == 0) {
             return accessObject.item;
-        }else{
+        } else {
             return recurHelper(accessObject.next, index - 1);
         }
     }
     // Here the implementation seems to end!
+    /* public static void main(String[] args) {
+        LinkedListDeque<Integer> A = new LinkedListDeque<Integer>();
+        A.addFirst(0);
+        A.removeLast();
+        A.addFirst(2);
+        A.removeFirst();
+        A.addLast(4);
+        A.get(0);
+    } */
 }
