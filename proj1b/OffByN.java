@@ -5,6 +5,7 @@ public class OffByN implements CharacterComparator {
     }
 
     public boolean equalChars(char x, char y) {
-        return Math.abs(x - y) == N;
+        return Math.abs(Character.toLowerCase(x) -
+                Character.toLowerCase(y)) == N;
     }
 }
