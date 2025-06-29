@@ -1,4 +1,4 @@
-import static org.junit.Assert.assertEquals;
+// import static org.junit.Assert.assertEquals;
 
 public class Palindrome {
     public Deque<Character> wordToDeque(String word) {

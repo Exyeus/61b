@@ -72,7 +72,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         System.out.print(headPointer.item);
     }
     public T removeFirst() {
-        if (this.isEmpty()){
+        if (this.isEmpty()) {
             return null;
         }
         T result = frontSentinel.next.item;
@@ -85,7 +85,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return result;
     }
     public T removeLast() {
-        if (this.isEmpty()){
+        if (this.isEmpty()) {
             return null;
         }
         T result = backSentinel.prev.item;
