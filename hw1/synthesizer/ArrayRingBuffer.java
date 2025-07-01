@@ -20,24 +20,34 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     }
 
     private class ArrayRingBufferIterator implements Iterator<T> {
-        private int wizPos;
+        private int currentPos; // 用于跟踪当前迭代位置
+        private int itemsLeft;  // 用于跟踪还剩下多少个元素可以迭代
 
         public ArrayRingBufferIterator() {
-            wizPos = first;
+            // 初始化迭代器
+            currentPos = first;
+            itemsLeft = fillCount; // 从父类获取当前缓冲区中的元素数量
         }
 
         @Override
         public boolean hasNext() {
-            return wizPos < fillCount;
+            // 如果还有剩余的元素可以迭代，则返回 true
+            return itemsLeft > 0;
         }
 
         @Override
         public T next() {
+            // 如果没有下一个元素，则抛出异常
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            T returnItem = rb[wizPos];
-            wizPos = (wizPos + 1) % capacity;
+            // 获取当前位置的元素
+            T returnItem = rb[currentPos];
+            // 更新当前位置，进行环绕处理
+            currentPos = (currentPos + 1) % capacity;
+            // 减少剩余元素计数
+            itemsLeft -= 1;
+            // 返回获取到的元素
             return returnItem;
         }
     }
