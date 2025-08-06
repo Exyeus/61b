@@ -43,13 +43,15 @@ public class Percolation {
         this.size = N;
         this.uf = new WeightedQuickUnionUF(N * N + 1);
         this.blockArray = new boolean[N][N];
-        this.virtualTop = N;
+        this.virtualTop = N * N;
         this.numberOfOpen = 0;
-        for (int j = 0; j < N; j++) {
+        /*for (int j = 0; j < N; j++) {
             // connect the sites of the first row to the virtual "water source".
             // Worthy of noting: 1 site for water source is equivalent to a row of those!
             uf.union(virtualTop, xyTo1D(0, j));
         }
+        * This is commented out, because openness is the deterministic condition.
+        */
 
     }
     public void open(int row, int col) {
@@ -61,6 +63,9 @@ public class Percolation {
         blockArray[row][col] = true;
         numberOfOpen += 1;
         // try to connect to surrounding blocks
+        if (row == 0) {
+            uf.union(xyTo1D(row, col), virtualTop);
+        }
         if (row > 0 && isOpen(row - 1, col)) {
             // for the upper side one
             uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
@@ -85,7 +90,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         // is the site (row, col) full?
         boundJudge(row, col);
-        return uf.connected(size, xyTo1D(row, col));
+        return uf.connected(virtualTop, xyTo1D(row, col)) && isOpen(row, col);
     }
     public int numberOfOpenSites() {
         // number of open sites
@@ -96,6 +101,7 @@ public class Percolation {
         // not sure about this method.
         // A system is said to percolate if there is a full site
         // in the bottom row of the grid.
+        // PROBLEMATIC!
         if (size == 1) {
             return isOpen(0, 0);
         }

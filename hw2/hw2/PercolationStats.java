@@ -13,8 +13,8 @@ public class PercolationStats {
         // perform T independent experiments on an N-by-N grid
         if (N <= 0
                 || T <= 0) {
-            throw new IllegalArgumentException("The grid size" +
-                    " and the trial times must be positive!");
+            throw new IllegalArgumentException("The grid size"
+                    + " and the trial times must be positive!");
         }
         dataRecord = new double[N];
         this.pf = pf;
@@ -50,6 +50,9 @@ public class PercolationStats {
     }
     public double stddev() {
         // sample standard deviation of percolation threshold
+        if (T == 1) {
+            return Double.NaN;
+        }
         return StdStats.stddev(dataRecord);
     }
     public double confidenceLow() {
