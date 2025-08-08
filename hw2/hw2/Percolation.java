@@ -63,23 +63,37 @@ public class Percolation {
         blockArray[row][col] = true;
         numberOfOpen += 1;
         // try to connect to surrounding blocks
+        int currentSite1D = xyTo1D(row, col);
         if (row == 0) {
             uf.union(xyTo1D(row, col), virtualTop);
         }
         if (row > 0 && isOpen(row - 1, col)) {
             // for the upper side one
-            uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+            int upperNeighbor = xyTo1D(row - 1, col);
+            if (!uf.connected(upperNeighbor, currentSite1D)) {
+                uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+            }
         }
         if (col > 0 && isOpen(row, col - 1)) {
-            // for the upper side one
-            uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+            // for the left side one
+            int leftNeighbor = xyTo1D(row, col - 1);
+            if (!uf.connected(leftNeighbor, currentSite1D)) {
+                uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+            }
         }
         if (col < size - 1 && isOpen(row, col + 1)) {
             // for the right side one
-            uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
+            int rightNeighbor = xyTo1D(row, col + 1);
+            if (!uf.connected(rightNeighbor, currentSite1D)) {
+                uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
+            }
         }
         if (row < size - 1 && isOpen(row + 1, col)) {
-            uf.union(xyTo1D(row, col), xyTo1D(row + 1, col));
+            // for the below one
+            int underNeighbor = xyTo1D(row + 1, col);
+            if (!uf.connected(underNeighbor, currentSite1D)) {
+                uf.union(xyTo1D(row, col), xyTo1D(row + 1, col));
+            }
         }
     }
     public boolean isOpen(int row, int col) {
@@ -107,7 +121,7 @@ public class Percolation {
         }
         for (int j = 0; j < size; j++) {
             if (uf.find(xyTo1D(size - 1, j))
-                    == uf.find(virtualTop)) {
+                    == virtualTop) {
                 return true;
             }
         }

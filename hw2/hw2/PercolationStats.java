@@ -9,6 +9,7 @@ public class PercolationStats {
     private int N;
     private int T;
     private PercolationFactory pf;
+
     public PercolationStats(int N, int T, PercolationFactory pf) {
         // perform T independent experiments on an N-by-N grid
         if (N <= 0
@@ -16,7 +17,9 @@ public class PercolationStats {
             throw new IllegalArgumentException("The grid size"
                     + " and the trial times must be positive!");
         }
-        dataRecord = new double[N];
+        dataRecord = new double[T];
+        this.N = N;
+        this.T = T;
         this.pf = pf;
         this.acquireDataArray();
     }
