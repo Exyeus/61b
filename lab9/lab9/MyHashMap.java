@@ -1,6 +1,8 @@
 package lab9;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -26,7 +28,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         this.clear();
     }
 
-    /* Removes all of the mappings from this map. */
+    /* Removes all the mappings from this map. */
     @Override
     public void clear() {
         this.size = 0;
@@ -53,19 +55,24 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        int hashCode = hash(key);
+        return buckets[hashCode].get(key);
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        int hashCode = hash(key);
+        if (get(key) == null) {
+            size += 1;
+        }
+        buckets[hashCode].put(key, value);
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
@@ -73,7 +80,17 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> resultSet = new HashSet<K>();
+        for (ArrayMap<K, V> bucket : buckets) {
+            if (bucket.size == 0) {
+                continue;
+            } else {
+                for (int j = 0; j < bucket.size; j++) {
+                    resultSet.addAll(bucket.keySet());
+                }
+            }
+        }
+        return resultSet;
     }
 
     /* Removes the mapping for the specified key from this map if exists.
@@ -81,7 +98,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        int hashCode = hash(key);
+
+        V result = buckets[hashCode].remove(key);
+        if (result != null) {
+            size -= 1;
+            return result;
+        } else {
+            return null;
+        }
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -89,11 +114,48 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        int hashCode = hash(key);
+        if (buckets[hashCode].get(key) == value) {
+            return remove(key);
+        } else {
+            return null;
+        }
     }
 
+    private class HashMapIterator<K> implements Iterator<K> {
+        private int currentPos;
+        private Iterator<K> arrayMapIterator;
+        private int currentBucketNo;
+        // private int currentBucketIndex;
+        public HashMapIterator() {
+            currentPos = 0;
+            // currentBucketIndex = 0;
+            currentBucketNo = 0;
+        }
+        public boolean hasNext() {
+            return currentPos < size;
+        }
+        public K next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            // Here comes finding and returning
+            if (buckets[currentBucketNo].size == 0
+                    || !arrayMapIterator.hasNext()) {
+                // skip current one.
+                do {
+                    currentBucketNo += 1;
+                } while (buckets[currentBucketNo].size > 0);
+                // try to find a filled arrayMap and start to iterate on that
+                arrayMapIterator = (Iterator<K>) buckets[currentBucketNo].iterator();
+                // sweep away the cache in each ArrayMap.
+            }
+            currentPos += 1;
+            return arrayMapIterator.next();
+        }
+    }
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new HashMapIterator<>();
     }
 }
