@@ -28,7 +28,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int leftIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2 * i;
     }
 
     /**
@@ -36,7 +36,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int rightIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2 * i + 1;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int parentIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return Math.floorDiv(i, 2);
     }
 
     /**
@@ -64,10 +64,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      * invalid because we leave the 0th entry blank.
      */
     private boolean inBounds(int index) {
-        if ((index > size) || (index < 1)) {
-            return false;
-        }
-        return true;
+        return (index <= size) && (index >= 1);
     }
 
     /**
@@ -103,12 +100,24 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     /**
      * Bubbles up the node currently at the given index.
      */
+
     private void swim(int index) {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        if (index == 1) {
+            return;
+        } else {
+            while (index > 1
+                    && min(index, parentIndex(index)) == index) {
+                // this and its parent, while min at index, which is intolerable,
+                // do the following to convert this situation!
+                int parentIndex = parentIndex(index);
+                swap(index, parentIndex);
+                index = parentIndex;
+            }
+        }
     }
 
     /**
@@ -119,8 +128,16 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+
+        while (!(min(index, leftIndex(index)) == index
+                && min(index, rightIndex(index)) == index)) {
+            int minIndex = min(leftIndex(index), rightIndex(index));
+            // null case is handled in min method.
+            swap(index, minIndex);
+            index = minIndex;
+        }
     }
+
 
     /**
      * Inserts an item with the given priority value. This is enqueue, or offer.
@@ -134,6 +151,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
 
         /* TODO: Your code here! */
+        // Due to special case, there is no size problem.
+        size += 1;
+        contents[size] = new Node(item, priority);
+
+        swim(size);
+
     }
 
     /**
@@ -143,7 +166,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T peek() {
         /* TODO: Your code here! */
-        return null;
+        return contents[1].item();
     }
 
     /**
@@ -158,7 +181,11 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T removeMin() {
         /* TODO: Your code here! */
-        return null;
+        T minNodeItem = contents[1].item();
+        swap(1, size);
+        size -= 1;
+        sink(1);
+        return minNodeItem;
     }
 
     /**
@@ -181,7 +208,23 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public void changePriority(T item, double priority) {
         /* TODO: Your code here! */
-        return;
+        int targetIndex = 0;
+        for (int i = 1; i < size + 1; i++) {
+            if (contents[i].item().equals(item)) {
+                targetIndex = i;
+                break;
+            }
+        }
+        contents[targetIndex].myPriority = priority;
+        int parentIndex = parentIndex(targetIndex);
+        int leftChildIndex = leftIndex(targetIndex);
+        int rightChildIndex = rightIndex(targetIndex);
+        if (min(targetIndex, parentIndex) != parentIndex) {
+            swim(targetIndex);
+        } else if (min(targetIndex, leftChildIndex) != targetIndex
+                || min(targetIndex, rightChildIndex) != rightChildIndex) {
+            sink(targetIndex);
+        }
     }
 
     /**
