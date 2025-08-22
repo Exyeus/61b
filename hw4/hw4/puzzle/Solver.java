@@ -1,64 +1,69 @@
 package hw4.puzzle;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap; // Import HashMap for visited states
+import java.util.List;
+import java.util.Map;   // Import Map
 import edu.princeton.cs.algs4.MinPQ;
 
 public class Solver {
 
-    // TODO: Review static, type casting, Comparable, etc.
+    // --- 核心修改：SearchNode 的定义 ---
+    // SearchNode 需要知道 g, h, f，并根据 f 排序。
+    // isVisited 字段在此标准 A* 实现中将被外部 Map 替换。
     private static class SearchNode implements Comparable<SearchNode> {
         public WorldState currentState;
-        public int movesFromInitial;
+        public int movesFromInitial; // This is 'g' in A*
         public SearchNode previousSearchNode;
+        // private boolean isVisited; // Not needed here as we use an external map
 
-        // public boolean isVisited;
+        // A* 需要 g (movesFromInitial) 和 h (estimatedDistanceToGoal) 来计算 f
+        private final int g; // Actual cost from start to this node
+        private final int h; // Estimated cost from this node to goal
+        private final int f; // Total estimated cost (f = g + h)
 
-        private final int g;
-        private final int h;
-        private final int f;
-
-
+        // 构造函数需要 WorldState 来计算 h，并存储 g, h, f
         public SearchNode(WorldState currentState, int moves, SearchNode previous) {
             this.currentState = currentState;
-            this.movesFromInitial = moves;
+            this.movesFromInitial = moves; // Keep for result
             this.previousSearchNode = previous;
-            // this.isVisited = false;
-            this.g = moves;
+
+            this.g = moves; // Set g
+            // Calculate h. Assumes WorldState.estimatedDistanceToGoal() knows the goal.
+            // If WorldState.estimatedDistanceToGoal() requires the goal state as an argument,
+            // this part needs adjustment (e.g., passing goalState to Solver and then here).
             this.h = currentState.estimatedDistanceToGoal();
-            this.f = this.g + this.h;
+            this.f = this.g + this.h; // Calculate f
         }
 
         /**
          * For the comparable traits, to fit MinPQ storage!
+         * A* prioritizes based on f = g + h.
          * @param y another SearchNode Object
-         * @return The priority they will be called for search
+         * @return The priority they will be called for search (based on f-value)
          */
         @Override
         public int compareTo(SearchNode y) {
-            /*int thisPriority = currentState.estimatedDistanceToGoal();
-            int yPriority = y.currentState.estimatedDistanceToGoal();
-            return Integer.compare(thisPriority, yPriority);
-        */
-            // PriorityQueue sorts in ascending order
-            // We prioritize lower value
-            int fComparison = Integer.compare(this.f, y.h);
+            // PriorityQueue sorts in ascending order, so we compare f values.
+            // If f values are equal, secondary sort by h is common, but not strictly required for correctness.
+            // We prioritize lower f value.
+            int fComparison = Integer.compare(this.f, y.f);
             if (fComparison != 0) {
                 return fComparison;
             }
-
+            // Optional: break ties with h value (heuristic)
             return Integer.compare(this.h, y.h);
         }
 
+        // For using SearchNode (specifically currentState) as keys in HashMap,
+        // we need equals and hashCode. These should operate on the currentState.
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            SearchNode that  = (SearchNode) o;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SearchNode that = (SearchNode) o;
             return this.currentState.equals(that.currentState);
         }
 
@@ -66,31 +71,47 @@ public class Solver {
         public int hashCode() {
             return this.currentState.hashCode();
         }
-
     }
 
+    // MinPQ 存储 SearchNode
     private final MinPQ<SearchNode> searchPath;
+    // movesToFinish: 最终步数
     private int movesToFinish;
+    // resultWorldStates: 存储最终路径
     private final List<WorldState> resultWorldStates;
 
+    // 变量：visitedMap 用于存储已经处理过的状态及其最优 g 值
+    // Key: WorldState, Value: 最优 g 值 (movesFromInitial)
     private Map<WorldState, Integer> visitedMap;
 
+    /**
+     * Constructor which solves the puzzle, computing
+     * everything necessary for moves() and solution() to
+     * not have to solve the problem again. Solves the
+     * puzzle using the A* algorithm. Assumes a solution exists.
+     * @param initial The beginning state, in type WorldState
+     */
+    public Solver(WorldState initial) {
+        this.searchPath = new MinPQ<>();
+        this.resultWorldStates = new ArrayList<>();
+        this.visitedMap = new HashMap<>(); // Initialize the visited map
 
+        // 插入初始节点
+        // 构造函数需要 WorldState 来计算 h
+        SearchNode initialNode = new SearchNode(initial, 0, null);
+        this.searchPath.insert(initialNode);
+
+        // 运行 solve() 方法来计算结果
+        this.solve();
+    }
 
     /**
-     * Based on given data, directly compute out results,
-     * containing the number of moves and the Iterable<WorldState>
-     * This should be executed within the Constructor method.
-     * Attributes need to be updated after running this method:
-     * * movesToFinish
-     * * resultWorldStates
+     * Solves the puzzle using the A* algorithm.
+     * This method uses the searchPath (MinPQ) and updates
+     * movesToFinish and resultWorldStates.
      */
-
     private void solve() {
-        // WorldState can be Word or others. The methods are well override.
-        // Note that the initial has been added to searchPath, we just begin!
-        // TODO: This algorithm offers redundant steps. Try to fix this.
-        //
+        // Loop until the priority queue is empty (no solution) or the goal is found.
         while (!searchPath.isEmpty()) {
             // 1. 从优先队列中取出 f 值最小的节点（当前最优节点）
             SearchNode currentNode = searchPath.delMin();
@@ -153,86 +174,6 @@ public class Solver {
         // 并清空 resultWorldStates。
         this.movesToFinish = -1; // 表示无解 (根据题目描述，可以认为不会发生)
         this.resultWorldStates.clear();
-
-
-/*SearchNode currentNode = searchPath.delMin();
-currentNode.isVisited = true;
-while (!currentNode.currentState.isGoal()) {
-    // start to check its neighbors not visited
-    for (WorldState state : currentNode.currentState.neighbors()) {
-        // How to avoid visiting those visited nodes?
-        if (!(state.equals(currentNode.currentState)
-                && (currentNode.previousSearchNode != null
-                && state.equals(currentNode.previousSearchNode.currentState)))) {
-            SearchNode newNode = new SearchNode(state,
-                    currentNode.movesFromInitial + 1, currentNode);
-            searchPath.insert(newNode);
-        }
-    }
-    currentNode = searchPath.delMin();
-}
-
-// If finished, then currentNode is the goal.
-SearchNode readNode = currentNode;
-
-// Update the steps taken to complete this transformation
-this.movesToFinish = currentNode.movesFromInitial;
-
-while (readNode.previousSearchNode != null) {
-    resultWorldStates.add(readNode.currentState);
-    readNode = readNode.previousSearchNode;
-}
-
-Collections.reverse(resultWorldStates); */
-
-/*/ Create the container
-this.resultWorldStates = new ArrayList<>();
-
-// Specially handle the first node as a beginning!
-SearchNode beginning = searchPath.delMin();
-for (WorldState state : beginning.currentState.neighbors()) {
-    SearchNode newNode = new SearchNode(state,
-            beginning.movesFromInitial + 1, beginning);
-
-    searchPath.insert(newNode);
-}
-
-// Now begin the formal searching.
-SearchNode currentNode = searchPath.delMin();
-
-while (!currentNode.currentState.isGoal()) {
-    for (WorldState state : currentNode.currentState.neighbors()) {
-        SearchNode newNode = new SearchNode(state,
-                currentNode.movesFromInitial + 1, currentNode);
-        searchPath.insert(newNode);
-
-        resultWorldStates.add(currentNode.currentState);
-        // Update the node, to start the next turn of searching.
-    }
-    currentNode = searchPath.delMin();
-}
-
-// End Condition: currentNode is the final goal state.
-movesToFinish = currentNode.movesFromInitial;*/
-
-    }
-
-    /**
-     * Constructor which solves the puzzle, computing
-     * everything necessary for moves() and solution() to
-     * not have to solve the problem again. Solves the
-     * puzzle using the A* algorithm. Assumes a solution exists.
-     * @param initial The beginning state, in type WorldState
-     */
-    public Solver(WorldState initial) {
-        this.searchPath = new MinPQ<>();
-        this.resultWorldStates = new ArrayList<>();
-        this.visitedMap = new HashMap<>();
-        this.searchPath.insert(new SearchNode(initial, 0, null));
-
-        this.movesToFinish = 0;
-
-        this.solve();
     }
 
     /**
