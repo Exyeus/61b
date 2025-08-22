@@ -191,7 +191,7 @@ public class Board implements WorldState {
             result %= 0x7fffffff;
         }
         return result;*/
-        return Objects.hash(size, Arrays.deepHashCode(tiles))
+        return Objects.hash(size, Arrays.deepHashCode(tiles));
     }
 
 }
