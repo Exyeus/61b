@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Board implements WorldState {
-
+    // Problematic
     private final int[][] tiles;
     private final int size;
 
