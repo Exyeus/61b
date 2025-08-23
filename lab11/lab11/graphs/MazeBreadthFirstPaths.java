@@ -34,7 +34,7 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
         //  Don't forget to update distTo, edgeTo,
         //  and marked, as well as call announce()
 
-        bfsQueue.enqueue(s);
+        /*bfsQueue.enqueue(s);
         marked[s] = true;
 
         announce();
@@ -56,10 +56,9 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
             for (int neighbor : maze.adj(currentPosition)) {
                 announce();
                 // To detect the target as it appears.
+                // 这就是为什么，确认找到和 return 在 DFS 里面被分开来写！
                 if (neighbor == t) {
                     targetFound = true;
-                    marked[neighbor] = true;
-                    return;
                 }
 
                 if (!marked[neighbor]) {
@@ -67,7 +66,11 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
                     distTo[neighbor] = distTo[currentPosition] + 1;
                     marked[neighbor] = true;
                     bfsQueue.enqueue(neighbor);
-                    // 妈的，记得 enqueue !
+                    // 记得 enqueue !
+                }
+
+                if (targetFound) {
+                    return;
                 }
                 /*if (!marked[neighbor] // Not visited
                         || (distTo[neighbor] > distTo[currentPosition] + 1 // Too long path taken
@@ -76,7 +79,32 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
                     distTo[neighbor] = distTo[currentPosition] + 1;
                     edgeTo[neighbor] = currentPosition;
                     marked[neighbor] = true;
-                }*/
+                }
+            }
+        }*/
+        bfsQueue.enqueue(s);
+        marked[s] = true;
+        distTo[s] = 0;
+        edgeTo[s] = s;
+        announce();
+        while (!bfsQueue.isEmpty()) {
+            announce();
+            int v = bfsQueue.dequeue();
+
+            // 1. Check for target HERE!
+            if (v == t) {
+                return; // or break;
+            }
+
+            // 2. Process neighbors
+            for (int w : maze.adj(v)) {
+                if (!marked[w]) {
+                    // 3. Update and enqueue
+                    marked[w] = true;
+                    edgeTo[w] = v;
+                    distTo[w] = distTo[v] + 1;
+                    bfsQueue.enqueue(w);
+                }
             }
         }
 
