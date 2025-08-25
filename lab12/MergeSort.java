@@ -94,7 +94,7 @@ public class MergeSort {
           Note that, its input is a single Queue, not sorted.
         */
         Queue<Item> resultQueueOfSort = new Queue<>();
-        if (items.size() <= 1) {
+        if (items.size() == 1) {
             return items;
         } else if (items.size() == 2) {
 
@@ -118,12 +118,7 @@ public class MergeSort {
             return mergeSortedQueues(mergeSort(queuePart1), mergeSort(items));
         }
     }
-    private static <Item extends Comparable> void printer(Queue<Item> inputQueue) {
-        for (Item item : inputQueue) {
-            System.out.print(item + " ");
-        }
-        System.out.print("\n");
-    }
+
     /** create a Queue of unsorted objects and print that queue.
      *  Next, call MergeSort.mergeSort() on that queue,
      *  and print both the original queue (which should be unchanged)
@@ -144,19 +139,5 @@ public class MergeSort {
         for (String item : sortedEmpires) {
             System.out.print(item + " ");
         }
-        System.out.print("\n");
-        Queue<Integer> inputQueue = new Queue<>();
-        int[] intList = new int[]{2, 4, 4, 4, 5, 7, 8, 8, 9, 9, 12 ,15, 14, 11, 18, 14, 17, 15, 18, 12};
-        for (int item : intList) {
-            inputQueue.enqueue(item);
-        }
-        printer(inputQueue);
-        Queue<Integer> sortedIntegerQueue = MergeSort.mergeSort(inputQueue);
-        printer(sortedIntegerQueue);
-
-        Queue<String> voidQueue = new Queue<>();
-        printer(voidQueue);
-        Queue<String> voidSortedQueue = MergeSort.mergeSort(voidQueue);
-        printer(voidSortedQueue);
     }
 }

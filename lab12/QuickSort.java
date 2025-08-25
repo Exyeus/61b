@@ -52,9 +52,6 @@ public class QuickSort {
         // and concatenate them after exert quickSort onto them recursively.
         // Launch the analysis work, from the Queue unsorted.
         // Item pivot, random or adopt the first directly?
-        if (unsorted.isEmpty()) {
-            return;
-        }
         for (Item currentItem : unsorted) {
             if (currentItem.compareTo(pivot) < 0) {
                 less.enqueue(currentItem);
@@ -75,38 +72,31 @@ public class QuickSort {
         } else if (items.size() == 2) {
             Item item1 = items.dequeue();
             Item item2 = items.dequeue();
+
+            Queue<Item> smallSortedQueue = new Queue<>();
+
             if (item1.compareTo(item2) <= 0) {
-                return items;
+                smallSortedQueue.enqueue(item1);
+                smallSortedQueue.enqueue(item2);
             } else {
-                Queue<Item> smallSortedQueue = new Queue<>();
                 smallSortedQueue.enqueue(item2);
                 smallSortedQueue.enqueue(item1);
-                return smallSortedQueue;
             }
+            return smallSortedQueue;
         } else {
             Item pivot = getRandomItem(items);
             Queue<Item> less = new Queue<>();
             Queue<Item> equal = new Queue<>();
             Queue<Item> greater = new Queue<>();
             partition(items, pivot, less, equal, greater);
-
             Queue<Item> sortedQueue = catenate(quickSort(less), equal);
-            sortedQueue = catenate(sortedQueue, quickSort(greater));
-
+            sortedQueue = catenate(sortedQueue, greater);
             return sortedQueue;
         }
     }
-    private static <Item extends Comparable> void printer(Queue<Item> inputQueue) {
-        for (Item item : inputQueue) {
-            System.out.print(item + " ");
-        }
-        System.out.print("\n");
-    }
     public static void main(String[] args) {
         Queue<String> empires = new Queue<String>();
-        String[] empireList = {"China", "Babylon", "India", "Rome", "Cree","Indonesia", "Khmer", "England", "Sumeria", "Macedon",
-                "Aztec", "France", "Spain", "Colombia", "Scythia",
-                "Carthage", "Zulu", "Congo", "Korea", "Japan", "Ethiopia"};
+        String[] empireList = {"China", "Babylon", "India", "Rome", "Cree"};
 
         for (String item : empireList) {
             empires.enqueue(item);
@@ -117,15 +107,8 @@ public class QuickSort {
         for (String item : sortedEmpires) {
             System.out.print(item + " ");
         }
-        System.out.print("\n");
-        Queue<Integer> inputQueue = new Queue<>();
-        int[] intList = new int[]{2, 4, 4, 4, 5, 7, 8, 8, 9, 9, 12 ,15, 14, 11, 18, 14, 17, 15, 18, 12};
-        for (int item : intList) {
-            inputQueue.enqueue(item);
-        }
-        printer(inputQueue);
-        Queue<Integer> sortedIntegerQueue = QuickSort.quickSort(inputQueue);
-        printer(sortedIntegerQueue);
     }
 }
-/**/
+/*,"Indonesia", "Khmer", "England", "Sumeria", "Macedon",
+"Aztec", "France", "Spain", "Colombia", "Scythia",
+"Carthage", "Zulu", "Congo", "Korea", "Japan", "Ethiopia"*/
