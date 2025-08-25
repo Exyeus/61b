@@ -94,7 +94,7 @@ public class MergeSort {
           Note that, its input is a single Queue, not sorted.
         */
         Queue<Item> resultQueueOfSort = new Queue<>();
-        if (items.size() == 1) {
+        if (items.size() <= 1) {
             return items;
         } else if (items.size() == 2) {
 

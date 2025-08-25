@@ -90,13 +90,16 @@ public class QuickSort {
             Queue<Item> greater = new Queue<>();
             partition(items, pivot, less, equal, greater);
             Queue<Item> sortedQueue = catenate(quickSort(less), equal);
-            sortedQueue = catenate(sortedQueue, greater);
+            sortedQueue = catenate(sortedQueue, quickSort(greater));
             return sortedQueue;
         }
     }
     public static void main(String[] args) {
         Queue<String> empires = new Queue<String>();
-        String[] empireList = {"China", "Babylon", "India", "Rome", "Cree"};
+        String[] empireList = {"China", "Babylon", "India", "Rome", "Cree",
+                "Indonesia", "Khmer", "England", "Sumeria", "Macedon",
+                "Aztec", "France", "Spain", "Colombia", "Scythia",
+                "Carthage", "Zulu", "Congo", "Korea", "Japan", "Ethiopia"};
 
         for (String item : empireList) {
             empires.enqueue(item);
@@ -109,6 +112,4 @@ public class QuickSort {
         }
     }
 }
-/*,"Indonesia", "Khmer", "England", "Sumeria", "Macedon",
-"Aztec", "France", "Spain", "Colombia", "Scythia",
-"Carthage", "Zulu", "Congo", "Korea", "Japan", "Ethiopia"*/
+/**/
