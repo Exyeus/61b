@@ -67,6 +67,59 @@ public class CountingSort {
      */
     public static int[] betterCountingSort(int[] arr) {
         // TODO make counting sort work with arrays containing negative numbers.
-        return null;
+        // It is LSD that we should use
+        // Negative numbers can be judged directly.
+        // Question: To enlarge the dictionary double, or to store and
+        // cast them specially?
+        // Make a long array, and we make "virtual indices", it is at the middle
+        // that we store those close to 0.
+        // To get the digit? Modular arithmetic should be ok.
+        // x - x % 10; x - x % 100 ... etc
+        int[] sorted = new int[arr.length];
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+        for (int item : arr) {
+            max = Math.max(max, item);
+            min = Math.min(min, item);
+        }
+        // No matter what the signs of min/max be, we need the range ok
+        // Having established nice range, we can emulate the position for integers
+        // For example, -2 and 5, we need -2, -1, 0, 1, 2, 3, 4, 5.
+        // That is max - min + 1. If 2 and 5, 2, 3, 4, 5: 5 - 2 + 1.
+        // x should be put into: count[x - min] -2 - (-2) -> 0;
+
+
+
+        int[] count = new int[max - min + 1];
+        for (int item : arr) {
+            count[item - min] += 1;
+        }
+        int[] starts = new int[max - min + 1];
+        int pos = 0;
+        for (int i = 0; i < starts.length; i += 1) {
+            starts[i] = pos;
+            pos += count[i];
+        }
+
+        for (int item : arr) {
+            int place = starts[item - min];
+            sorted[place] = item;
+            starts[item - min] += 1;
+        }
+
+        // return the sorted array
+        return sorted;
     }
+    public static void main(String[] args) {
+        int[] trialArray = new int[]{-1, -2, 9, 4, 5, 1, 100, 1000000};
+        for (int item : trialArray) {
+            System.out.print(item + " ");
+        }
+        System.out.print("\n");
+        int[] sortedArray = CountingSort.betterCountingSort(trialArray);
+        for (int item : sortedArray) {
+            System.out.print(item + " ");
+        }
+    }
+
 }

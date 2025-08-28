@@ -72,8 +72,11 @@ public class MergeSort {
 
     private static <Item extends Comparable> Queue<Item> splitQueue(
             Queue<Item> singleItemQueues, int combineRange) {
-        if (combineRange <= 0 || combineRange >= singleItemQueues.size()) {
+        if (combineRange < 0 || combineRange > singleItemQueues.size()) {
+            // combineRange > singleItemQueues vs. combineRange >= singleItemQueues??
             throw new IllegalArgumentException();
+        } else if (combineRange == 0 && !singleItemQueues.isEmpty()) {
+            return singleItemQueues;
         }
         Queue<Item> headPartQueue = new Queue<>();
         for (int i = 0; i < combineRange; i++) {
