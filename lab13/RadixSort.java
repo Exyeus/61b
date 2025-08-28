@@ -38,7 +38,7 @@ public class RadixSort {
         // Get the max size of Strings, to decide the time for loops.
         for (int iterateTimes = max - 1; iterateTimes > -1; iterateTimes--) {
             // Iterate for max time,
-            // TODO: Check those chars being ascii's or not, throwing Exceptions if needed.
+            // TO DO: Check those chars being ascii's or not, throwing Exceptions if needed.
 
 
             for (int index = 0; index < length; index++) {
@@ -117,8 +117,7 @@ public class RadixSort {
         return;
     }
     public static void main(String[] args) {
-        String unsortedStrings[] = new String[]{"Virgil", "Dante", "Nero", "V", "Nightmare", "Griffon", "Shadow",
-        "Urizon", "Trish", "Kyrie"};
+        String[] unsortedStrings = new String[]{"Virgil", "Dante", "Nero", "V", "&^(^(&^", "*)@!!"};
         String[] sorted = RadixSort.sort(unsortedStrings);
         for (String s : sorted) {
             System.out.print(s + " ");
